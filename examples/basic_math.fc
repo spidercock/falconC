@@ -1,0 +1,14 @@
+i8 gcd(i8 a, i8 b){
+    if ( a == 0 ) return b;
+    if ( b == 0 ) return a;
+    if (a < 0 || b < 0) return gcd(a < 0 ? -a : a, b < 0 ? -b : b);
+    if (b > a) return gcd(b, a);
+    return gcd(a-b, b);
+}
+
+
+i8 main(){
+    i8 pgcd = gcd(10023, 2314i8);
+    printf("%d8\n", pgcd);
+    return 0;
+}
