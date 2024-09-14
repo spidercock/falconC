@@ -1,0 +1,3 @@
+functions in snake_case
+structures in CamelCase
+function names: object_name_function

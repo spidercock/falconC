@@ -1,0 +1,5 @@
+int main(){
+    printf "hello world\n";
+    // the classic way is still supported
+    return 0;
+}
