@@ -1,64 +1,73 @@
 #include "../utils/option.h"
+
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdint.h>
+#include <string.h>
 
-#define RED "\x1b[31m"
-#define BOLD "\x1b[01m"
-#define RESET "\x1b[00m"
+#define     RED    "\e[31m"
+#define     BOLD   "\e[01m"
+#define     RESET  "\e[00m"
+#define     endl   "\n"
 
-#define OPTION_IMPL(T) \
-struct Option_##T { \
-    bool isNone; \
-    T val; \
-}; \
-\
-typedef struct Option_##T* Option_##T;\
-Option_##T option_##T##_some(T x) { \
-    Option_##T ret = (Option_##T)malloc(sizeof(struct Option_##T)); \
-    if (ret == NULL) { \
-        fprintf(stderr, RED BOLD "Option Error: Critical Error! Memory Allocation Failed" RESET "\n"); \
-        exit(EXIT_FAILURE); \
-    } \
-    ret->isNone = false; \
-    ret->val = x; \
-    return ret; \
-} \
-\
-Option_##T option_##T##_none(void) { \
-    Option_##T ret = (Option_##T)malloc(sizeof(struct Option_##T)); \
-    if (ret == NULL) { \
-        fprintf(stderr, RED BOLD "Option Error: Critical Error! Memory Allocation Failed" RESET "\n"); \
-        exit(EXIT_FAILURE); \
-    } \
-    ret->isNone = true; \
-    return ret; \
-} \
-\
-bool option_##T##_is_none(Option_##T option) { \
-    return option->isNone; \
-} \
-\
-T option_##T##_extract(Option_##T option) { \
-    if(option->isNone) { \
-        fprintf(stderr, RED BOLD "Option Error: Forced Extraction Failed! Option is None" RESET "\n"); \
-        exit(EXIT_FAILURE); \
-    } \
-    return option->val; \
-} \
-\
-T option_##T##_extract_or(Option_##T option, T default_val) { \
-    return option->isNone ? default_val : option->val; \
-} \
-\
-void option_##T##_destroy(Option_##T option) { \
-    free(option); \
-} \
-\
-void option_##T##_assign(Option_##T option, T val) { \
-    option->isNone = false; \
-    option->val = val; \
+
+
+struct Option{
+    void* content;
+    bool isnone;
+};
+typedef struct Option* Option;
+
+Option Some_(void* x, size_t size){
+    Option op = (Option)malloc(sizeof(struct Option));
+    if ( op == NULL ){
+        fprintf(stderr, RED BOLD "Error allocating memory for the Option Object, aborting now" RESET endl);
+        exit(EXIT_FAILURE);
+    }
+    op -> content = malloc(size);
+    if(op -> content == NULL){
+        fprintf(stderr, RED BOLD "Error allocating memory for the Option Object's contents, aboring now" RESET endl);
+        free(op);
+        exit(EXIT_FAILURE);
+    }
+    memcpy(op -> content, x, size);
+    op -> isnone  = false;
+    return op;
 }
 
-// Include the implementation for uint8_t
-OPTION_IMPL(uint8_t)
+Option None_(){
+    Option option = (Option)malloc(sizeof(struct Option));
+    if ( option == NULL ){
+        fprintf(stderr, RED BOLD "Error allocating memory for the Option Object, aborting now" RESET endl);
+        exit(EXIT_FAILURE);
+    }
+
+    option->isnone = true;
+    return option;
+}
+
+void assign_(Option option, void* x, size_t size){
+    free(option->content);
+    option->content = malloc(sizeof(size));
+    if(option->content == NULL){
+        fprintf(stderr, RED BOLD "Error reallocating memory for the Option Object in value assigning, aborting now" RESET endl);
+        exit(EXIT_FAILURE);
+    }
+    memcpy(option->content, x, size);
+    option->isnone  = false;
+}
+
+bool is_none(Option op){
+    return op->isnone;
+}
+
+void* extract_(Option option, size_t size){
+    void* retval = malloc(sizeof(size));
+    memcpy(retval, option->content, size);
+    return retval;
+}
+
+void destroy_option(Option op){
+    if(!op -> isnone) free(op->content);
+    free(op);
+}

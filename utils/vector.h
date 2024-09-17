@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "Option.h"
 
+
 enum SortFlag{
     isSorted,
     isUnsorted
@@ -15,7 +16,7 @@ enum SortFlag{
 
 // Declare vector type and function prototypes
 #define VECTOR_DEF(T) \
-    OPTION_DEF(T)                                                                                 \
+    OPTION_DEF(uint16_t)\                                                                                 \
     typedef struct Vector_##T*        Vector_##T;                                                 \
     Vector_##T                        vector_##T##_init();                      /* O(1)        */ \
     Vector_##T                        vector_##T##_with_capacity(uint16_t);     /* O(1)        */ \
@@ -36,7 +37,7 @@ enum SortFlag{
     void                              vector_##T##_reverse_it(Vector_##T);      /* O(n)         */\
     void                              vector_##T##_sort_it(Vector_##T);         /* O(nlogn)    */ \
     Vector_##T                        vector_##T##_sort(const Vector_##T);      /* O(logn)     */ \
-    uint16_t                          vector_##T##_find(const Vector_##T, T, SortFlag); /* O(logn)-O(n) */ \
+    Option_uint16_t                   vector_##T##_find(const Vector_##T, T, SortFlag); /* O(logn)-O(n) */ \
     void                              vector_##T##_destroy(Vector_##T);    /* O(1)        */ \
     void                              vector_##T##_print(const Vector_##T);     /* O(n)        */ \
 
