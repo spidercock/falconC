@@ -137,7 +137,6 @@ void test5_fail(bool *output) {
 
 void test6_succ(bool *output) {
     Option option = Somel(uint8_t, 10);
-    printf("%p\n", option->content);
     assignl(uint8_t, option, 20);  // Use assignv macro
     if(extract(uint8_t, option) == 20) {
         fprintf(stdout, GREEN BOLD "Test6_succ: passed successfully" RESET "\n");
